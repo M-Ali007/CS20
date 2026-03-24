@@ -21,7 +21,9 @@ def calculate():
     try:
         result = eval(expression)
     except SyntaxError:
-        
+        result = "ERROR - PROPER EXPRESSION ONLY PLEASE"
+    except ZeroDivisionError:
+        result = "Undefined - You cannot divide by zero"
 
     my_text.delete("1.0", tk.END)
     my_text.insert(tk.END, result)
