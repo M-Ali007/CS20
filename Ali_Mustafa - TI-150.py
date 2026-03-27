@@ -5,6 +5,16 @@
 
 # This program is my own work - MA
 
+"""
+Limitations -
+
+“Consider any possible problems or limitations pertaining to this program.
+What are they? Make the necessary modifications.”
+
+My code can get issues when dividing by 0, and so to mitigate this issue, I have checked for the specific error
+and I have used a try except statement to catch it and tell the user that the input is bad.
+"""
+
 #imports
 import tkinter as tk
 from tkinter import ttk
@@ -18,9 +28,9 @@ def clear():
 def calculate():
     expression = my_text.get("1.0", tk.END) # gets the contents of the textbox
     try:
-        result = eval(expression). #Python Function that takes a string and returns answer
+        result = eval(expression) #Python Function that takes a string and returns answer
     except SyntaxError:
-        result = "ERROR - PROPER EXPRESSION ONLY PLEASE". # Error checking for bad input
+        result = "ERROR - PROPER EXPRESSION ONLY PLEASE" # Error checking for bad input
     except ZeroDivisionError:
         result = "Undefined - You cannot divide by zero" # Error chekcing for zero divisions
 
@@ -46,9 +56,9 @@ buttons = {
 }
 
 
-root = tk.Tk(). # creates tkinter instance
-root.title("MustaCalc"). # window name
-frame = tk.Frame(root, padding=10) # initializes tkinter frame
+root = tk.Tk() # creates tkinter instance
+root.title("MustaCalc") # window name
+frame = ttk.Frame(root, padding=10) # initializes tkinter frame
 frame.grid() # initializes grid layout
 my_text = tk.Text(frame, wrap='word', height=2, width=20) # main text box
 my_text.grid(column=1, row=2, columnspan=4, sticky='ew') # creates grid layout
