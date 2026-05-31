@@ -10,13 +10,20 @@
 #
 # A problem that I came across was #TODO
 
-import pygame, sys
+import pygame, sys, random
+import os
+import platform
+
+if platform.system() == 'Linux':
+    os.environ['SDL_VIDEODRIVER'] = 'x11'
+    os.environ['SDL_VIDEO_HIGHDPI_ENABLED'] = '0'
 
 pygame.init()
-
-screen = pygame.display.set_mode((1280,720))
-
+screen = pygame.display.set_mode((576,1024))
 clock = pygame.time.Clock()
+
+bg_surface = pygame.image.load('assets/background-day.png')
+bg_surface = pygame.transform.scale2x(bg_surface)
 
 while True:
     for event in pygame.event.get():
@@ -24,7 +31,8 @@ while True:
             pygame.quit()
             sys.exit()
 
-    screen.fill((0,0,0))
+    screen.blit(bg_surface, (0,0))
+
     pygame.display.update()
     clock.tick(240)
     pygame.display.set_caption(f"FPS: {int(clock.get_fps())}")
