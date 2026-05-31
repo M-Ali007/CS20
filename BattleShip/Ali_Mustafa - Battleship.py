@@ -5,7 +5,12 @@
 
 # This program is my own work - MA
 
-import pygame
+# Consider any possible problems or limitations pertaining to this program.
+# What are they? Make the necessary modifications.
+#
+# A problem that I came across was #TODO
+
+import pygame, sys
 
 pygame.init()
 
@@ -14,19 +19,12 @@ screen = pygame.display.set_mode((1280,720))
 clock = pygame.time.Clock()
 
 while True:
-    # Process player inputs.
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-            raise SystemExit
+            sys.exit()
 
-    # Do logical updates here.
-    # ...
-
-    screen.fill("purple")  # Fill the display with a solid color
-
-    # Render the graphics here.
-    # ...
-
-    pygame.display.flip()  # Refresh on-screen display
-    clock.tick(60)         # wait until next frame (at 60 FPS)
+    screen.fill((0,0,0))
+    pygame.display.update()
+    clock.tick(240)
+    pygame.display.set_caption(f"FPS: {int(clock.get_fps())}")
