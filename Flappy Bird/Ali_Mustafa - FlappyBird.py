@@ -44,6 +44,16 @@ def draw_pipes(pipes):
             flip_pipe = pygame.transform.flip(pipe_surface, False, True)
             screen.blit(flip_pipe, pipe)
 
+def check_collision(pipes):
+    for pipe in pipes:
+        if bird_rect.colliderect(pipe):
+            return False
+
+    if bird_rect.top <= -100 or bird_rect.bottom >= 900: #using inequalites for this because pixel measurements are never exact
+        return False
+
+    return True
+
 pygame.init()
 screen = pygame.display.set_mode((576,1024))
 clock = pygame.time.Clock()
@@ -51,9 +61,10 @@ pygame.display.set_caption(f"Flappy Mustafa - FPS: {int(clock.get_fps())}")
 
 
 # Global Game Vars
-
 gravity = 0.25
 bird_movement = 0
+game_active = True
+
 
 bg_surface = pygame.image.load('assets/background-day.png').convert()
 bg_surface = pygame.transform.scale2x(bg_surface)
@@ -80,22 +91,29 @@ while True:
             pygame.quit()
             sys.exit()
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE and game_active:
                 bird_movement = 0
                 bird_movement -= 12
+            if event.key == pygame.K_SPACE and not game_active:
+                game_active = True
+                pipe_list.clear()
+                bird_rect.center = (100, 512)
+                bird_movement = 0
         if event.type == SPAWNPIPE:
             pipe_list.extend(create_pipe())
 
     screen.blit(bg_surface,(0,0))
 
-    #bird
-    bird_movement += gravity
-    bird_rect.centery += bird_movement
-    screen.blit(bird_surface, bird_rect)
+    if game_active:
+        #bird
+        bird_movement += gravity
+        bird_rect.centery += bird_movement
+        screen.blit(bird_surface, bird_rect)
+        game_active = check_collision(pipe_list)
 
-    #pipes
-    pipe_list = move_pipes(pipe_list)
-    draw_pipes(pipe_list)
+        #pipes
+        pipe_list = move_pipes(pipe_list)
+        draw_pipes(pipe_list)
 
     #floor
     floor_x_pos -= 1
@@ -105,4 +123,4 @@ while True:
 
 
     pygame.display.update()
-    clock.tick(240)
+    clock.tick(120)
