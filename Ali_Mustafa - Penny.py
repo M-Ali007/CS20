@@ -19,7 +19,6 @@ board = {
     5: ["[  X  ]", "[  X  ]", "[  X  ]", "[  X  ]", "[  X  ]"],
 }
 
-
 # --- Functions ---
 
 # Prints all 5 rows of the board
@@ -81,6 +80,7 @@ def playAgain():
 
     if again == 'y':
         # Reset the board and restart
+        global board 
         board = {
             1: ["[  X  ]", "[  X  ]", "[  X  ]", "[  X  ]", "[  X  ]"],
             2: ["[  X  ]", "[  X  ]", "[  X  ]", "[  X  ]", "[  X  ]"],
@@ -96,15 +96,15 @@ def playAgain():
 # --- Main Game Loop ---
 
 def main():
-    print("Welcome to the Python Penny Pitch Master AKA PPPM 6000!")
+    print("Welcome to the Python Penny (Bitcoin) Pitch Master AKA PPPM 6000!")
     print()
 
     while True:
         printBoard()
-        print("Here is your Board with INSANE Prizes!!")
+        print("This is your Board with INSANE hidden Prizes!!")
 
         # Ask the player if they want to pay to play
-        ans = input("Do you want to pay 15 Bitcoin to play? (y/n) : ")
+        ans = input("Do you want to pay 10 Bitcoin to play? (y/n) : ")
         while ans not in ["y", "n"]:
             ans = input("Please enter either y or n: ")
 
@@ -120,7 +120,7 @@ def main():
         pennies = 0
         while pennies <= 9:
             pennies += 1
-            print(f"Throwing penny {pennies}...")
+            print(f"Throwing bitcoin {pennies}...")
             time.sleep(1)
 
         print()
@@ -156,7 +156,6 @@ def main():
                 case "[  X  ]":
                     pass
 
-        print(numWin)
 
         # Build and print the winnings summary sentence
         text = "You won "
