@@ -6,11 +6,12 @@
 # This program is my own work - MA
 
 import random, sys, time
-
+from collections import Counter
 
 # --- Board Setup ---
 
-# The game board: 5 rows, each with 5 hidden slots (all start as [  X  ])
+# 5x5 grid where each slot starts hidden as "[  X  ]"
+# Keys are row numbers (1–5), values are lists of 5 slot strings
 board = {
     1: ["[  X  ]", "[  X  ]", "[  X  ]", "[  X  ]", "[  X  ]"],
     2: ["[  X  ]", "[  X  ]", "[  X  ]", "[  X  ]", "[  X  ]"],
@@ -21,22 +22,24 @@ board = {
 
 # --- Functions ---
 
-# Prints all 5 rows of the board
+# Prints each row of the board on its own line using * to unpack the slot list
 def printBoard():
     for r in board:
         print(*board[r])
 
 
-# Randomly places prizes in 3+ slots per row
+# Randomly hides prizes in slots across every row before the player throws
+# Selects at least 3 slot indices per row (duplicates allowed, so a slot can be
+# overwritten with a different prize — meaning fewer than 3 distinct slots may end up with prizes)
 def setPrizes():
     for r in board:
         randomIndices = []
 
-        # Pick at least 3 random slot indices for this row
+        # Keep adding indices until we have at least 3 (may contain duplicates)
         while len(randomIndices) <= 2:
             randomIndices.append(random.randint(0, 4))
 
-        # Assign a random prize to each selected slot
+        # Replace each selected slot with a randomly chosen prize emoji
         for index in randomIndices:
             rNum = random.randint(1, 5)
             match rNum:
@@ -52,7 +55,8 @@ def setPrizes():
                     board[r][index] = f"[ 💎 ]"
 
 
-# Randomly reveals 2 slots per row and returns what was won
+# Reveals exactly 2 distinct slots per row (10 total across the board)
+# Replaces each revealed slot with "[ WON ]" and returns a flat list of what was uncovered
 def checkWinnings():
     winnings = []
 
@@ -62,7 +66,7 @@ def checkWinnings():
         while randomIndices[0] == randomIndices[1]:
             randomIndices[1] = random.randint(0, 4)
 
-        # Mark revealed slots as won and collect their contents
+        # Record the slot's content then mark it as revealed
         for index in randomIndices:
             winnings.append(board[r][index])
             board[r][index] = "[ WON ]"
@@ -70,7 +74,7 @@ def checkWinnings():
     return winnings
 
 
-# Asks the player if they want to play again, restarts or exits accordingly
+# Prompts the player to play again; resets the board and restarts via main() if yes, exits if no
 def playAgain():
     again = input("Do you want to play again? (y/n) :")
 
@@ -79,8 +83,8 @@ def playAgain():
         again = input("Please enter either y or n: ")
 
     if again == 'y':
-        # Reset the board and restart
-        global board 
+        # Overwrite the global board with a fresh hidden grid, then re-enter main()
+        global board
         board = {
             1: ["[  X  ]", "[  X  ]", "[  X  ]", "[  X  ]", "[  X  ]"],
             2: ["[  X  ]", "[  X  ]", "[  X  ]", "[  X  ]", "[  X  ]"],
@@ -103,7 +107,7 @@ def main():
         printBoard()
         print("This is your Board with INSANE hidden Prizes!!")
 
-        # Ask the player if they want to pay to play
+        # Ask the player whether they want to spend 10 Bitcoin to play this round
         ans = input("Do you want to pay 10 Bitcoin to play? (y/n) : ")
         while ans not in ["y", "n"]:
             ans = input("Please enter either y or n: ")
@@ -116,7 +120,7 @@ def main():
 
         print()
 
-        # Simulate throwing 10 pennies one by one
+        # Animate throwing each of the 10 bitcoins one at a time with a 1-second delay
         pennies = 0
         while pennies <= 9:
             pennies += 1
@@ -125,45 +129,55 @@ def main():
 
         print()
 
-        # Set prizes and reveal winnings
+        # Hide prizes on the board, then reveal the player's 10 random slots
         setPrizes()
         winnings = checkWinnings()
 
         print()
         printBoard()
 
-        # Tally up what the player actually won
+        # Convert raw emoji slot strings into readable prize names (blank "[  X  ]" slots are skipped)
         finalWinnings = []
-        numWin = 0
 
         for win in winnings:
             match win:
                 case "[ 💰 ]":
                     finalWinnings.append("some Money")
-                    numWin += 1
                 case "[ 🧸 ]":
                     finalWinnings.append("a Teddy Bear")
-                    numWin += 1
                 case "[ 🚲 ]":
                     finalWinnings.append("a Bicycle")
-                    numWin += 1
                 case "[ 🛳️  ]":
                     finalWinnings.append("a Cruise Ship Ticket")
-                    numWin += 1
                 case "[ 💎 ]":
                     finalWinnings.append("a Diamond")
-                    numWin += 1
                 case "[  X  ]":
                     pass
 
 
-        # Build and print the winnings summary sentence
+        # Count how many of each prize the player got; only prizes with 3+ matches are awarded
+        # Then assemble a grammatically correct "You won X, Y, and Z." summary string
+        countedList = Counter(finalWinnings)
+        prizeList = []
+        numWin = 0
+
+        for key, value, *_ in countedList.items():
+            if int(value) >= 3:
+                prizeList.append(key)
+                numWin += 1
+
         text = "You won "
-        for i in range(numWin):
-            if i == numWin - 1:
-                text += f"and {finalWinnings[i]}."
-            elif i < numWin:
-                text += finalWinnings[i] + ", "
+        if numWin == 0:
+            text += "Nothing D;"
+        else:
+            for i in range(numWin):
+                if numWin == 1:
+                    text += f"{finalWinnings[i]}."
+                else:
+                    if i == numWin - 1:
+                        text += f"and {finalWinnings[i]}."
+                    elif i < numWin:
+                        text += finalWinnings[i] + ", "
 
         print()
         print(text)
